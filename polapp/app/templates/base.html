@@ -63,10 +63,10 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Custom Components:</h6>
-            <a class="collapse-item" href="{{ url_for('elements.buttons') }}">Buttons</a>
-            <a class="collapse-item" href="{{ url_for('elements.cards') }}">Cards</a>
-            <a class="collapse-item" href="{{ url_for('elements.charts') }}">Charts</a>
-            <a class="collapse-item" href="{{ url_for('elements.tables') }}">Tables</a>
+            <a class="collapse-item" href="{{ url_for('index.buttons') }}">Buttons</a>
+            <a class="collapse-item" href="{{ url_for('index.cards') }}">Cards</a>
+            <a class="collapse-item" href="{{ url_for('index.charts') }}">Charts</a>
+            <a class="collapse-item" href="{{ url_for('index.tables') }}">Tables</a>
           </div>
         </div>
       </li>
@@ -80,10 +80,10 @@
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Custom Utilities:</h6>
-            <a class="collapse-item" href="{{ url_for('utilities.color') }}">Colors</a>
-            <a class="collapse-item" href="{{ url_for('utilities.border') }}">Borders</a>
-            <a class="collapse-item" href="{{ url_for('utilities.animation') }}">Animations</a>
-            <a class="collapse-item" href="{{ url_for('utilities.other') }}">Other</a>
+            <a class="collapse-item" href="{{ url_for('index.color') }}">Colors</a>
+            <a class="collapse-item" href="{{ url_for('index.border') }}">Borders</a>
+            <a class="collapse-item" href="{{ url_for('index.animation') }}">Animations</a>
+            <a class="collapse-item" href="{{ url_for('index.other') }}">Other</a>
           </div>
         </div>
       </li>
@@ -123,10 +123,10 @@
           <div class="bg-white py-2 collapse-inner rounded">
 	    <h6 class="collapse-header">Auth Navigation:</h6>
             <a class="collapse-item" href="{{url_for('auth.login') }}">Login</a>
-		{% if not current_user.is_anonymous %}
             <a class="collapse-item" href="{{url_for('auth.register') }}">Register</a>
-		{% endif %}
+		{% if not current_user.is_anonymous %}
             <a class="collapse-item" href="{{url_for('auth.profile', username=current_user.username) }}">Own Profile</a>
+		{% endif %}
             <a class="collapse-item" href="{{url_for('auth.forgot_password') }}">Forgot Password</a>
           </div>
         </div>
@@ -134,14 +134,14 @@
 
       <!-- Nav Item - Charts -->
       <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('elements.charts') }}">
+        <a class="nav-link" href="{{ url_for('index.charts') }}">
           <i class="fas fa-fw fa-chart-area"></i>
           <span>Charts</span></a>
       </li>
 
       <!-- Nav Item - Tables -->
       <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('elements.tables') }}">
+        <a class="nav-link" href="{{ url_for('index.tables') }}">
           <i class="fas fa-fw fa-table"></i>
           <span>Tables</span></a>
       </li>
@@ -172,14 +172,21 @@
           </button>
 
           <!-- Topbar Search -->
-          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" method="get"
+                        action="{{ url_for('search.search') }}">
             <div class="input-group">
+		{% if g.search_form %}
+		{{ g.search_form.q(size=20, class="form-control bg-light border-0 small",
+                            placeholder="Search for...") }}
+		{% else %}
               <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+		{% endif %}
               <div class="input-group-append">
                 <button class="btn btn-primary" type="button">
                   <i class="fas fa-search fa-sm"></i>
-                </button>
+                </button>	
               </div>
+		
             </div>
           </form>
 
@@ -309,7 +316,7 @@
                     <div class="small text-gray-500">Chicken the Dog · 2w</div>
                   </div>
                 </a>
-                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+                <a class="dropdown-item text-center small text-gray-500" href="{{url_for('messages.messages')}}">Read More Messages</a>
               </div>
             </li>
 

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block header %}Messages{% endblock %}
+
+{% block title %}Send message{% endblock %}
+
+{% block content %}
+    <h1>Send message to 
+	<a href="{{ url_for('auth.profile', username=recipient) }}"> {{recipient}} </a>
+	</h1>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+{% endblock %}

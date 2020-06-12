@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block header %}Messages{% endblock %}
+
+{% block title %}Recived messages{% endblock %}
+
+{% block content %}
+          <!-- Page Heading -->
+          <h1 class="h3 mb-4 text-gray-800">Recived messages</h1>
+	{% for message in messages %}
+        	{% include 'messages/_message.html' %}
+    	{% endfor %}
+
+    {% if prev_url %} 
+	<a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span>
+                    'Previous results'
+        </a>
+    {% endif %}
+    {% if next_url %}
+        <a href="{{ next_url or '#' }}">
+                    'Next results'
+                    <span aria-hidden="true">&rarr;</span>
+        </a>
+    {% endif %}
+{% endblock %}

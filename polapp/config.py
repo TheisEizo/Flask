@@ -8,10 +8,14 @@ class DefaultConfig:
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    MAIL_SERVER='smtp.googlemail.com'
-    MAIL_PORT=587
-    MAIL_USE_TLS=True
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL') or 'http://localhost:9200'
+
+    MAIL_SERVER = 'smtp.googlemail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
     MAIL_USE_SSL = False
-    MAIL_USERNAME='theizo.bedsted.db@gmail.com'
-    MAIL_PASSWORD='PythonPassword'
-    MAIL_DEFAULT_SENDER='theizo.bedsted.db@gmail.com'
+    MAIL_USERNAME = 'theizo.bedsted.db@gmail.com'
+    MAIL_PASSWORD = 'PythonPassword'
+    MAIL_DEFAULT_SENDER = 'theizo.bedsted.db@gmail.com'
+
+    POSTS_PER_PAGE = 10

@@ -9,6 +9,8 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
 
+from elasticsearch import Elasticsearch
+
 app = Flask(__name__)
 db = SQLAlchemy()
 login = LoginManager()
@@ -18,21 +20,20 @@ mail = Mail()
 def create_app(configfile=None):
 	app.config.from_object('config.DefaultConfig')
 	Bootstrap(app)
-																																									
-	from .templates import elements
-	app.register_blueprint(elements.bp)
 
-	from .templates import utilities
-	app.register_blueprint(utilities.bp)
-
-	from . import auth
-	app.register_blueprint(auth.bp)
-
-	from . import index
-	app.register_blueprint(index.bp)
+	from .main import routes
+	app.register_blueprint(routes.bp)
 	app.add_url_rule('/', endpoint='index')
+	app.register_error_handler(404, routes.error)
 
-	app.register_error_handler(404, index.error)
+	from .auth import routes
+	app.register_blueprint(routes.bp)
+
+	from .search import routes
+	app.register_blueprint(routes.bp)
+
+	from .messages import routes
+	app.register_blueprint(routes.bp)
 	
 	db.init_app(app)
 	
@@ -42,7 +43,11 @@ def create_app(configfile=None):
 	migrate.init_app(app, db)
 
 	mail.init_app(app)
-																																			
+
+	app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']])
+	if not app.elasticsearch.ping():
+		app.elasticsearch = None
+		
 	return app
 
 from app import auth
