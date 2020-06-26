@@ -9906,7 +9906,7 @@ a:focus {
   border: 0;
   font-weight: 900;
   content: '\f105';
-  font-family: 'Font Awesome 5 Free';
+  font-family: 'Font Awesome 5 Free';ic
 }
 
 .sidebar .nav-item.dropdown.show .dropdown-toggle::after,
@@ -9919,14 +9919,24 @@ a:focus {
   position: relative;
 }
 
+.table-item {
+  display: block;
+}
+
+.table .table-hover .table-item {
+  position: relative;
+}
+
 .sidebar .nav-item .nav-link .badge-counter,
-.topbar .nav-item .nav-link .badge-counter {
+.topbar .nav-item .nav-link .badge-counter,
+.table .table-hover .table-item .badge-counter{
   position: absolute;
   transform: scale(0.7);
   transform-origin: top right;
   right: .25rem;
   margin-top: -.25rem;
 }
+
 
 .sidebar .nav-item .nav-link .img-profile,
 .topbar .nav-item .nav-link .img-profile {

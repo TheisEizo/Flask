@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block header %}<a href="{{url_for('index')}}">&larr; Back to Dashboard</a>{% endblock %}
+
+{% block title %}Organizations{% endblock %}
+
+{% block content %}
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <h1 class="h3 mb-0 text-gray-800">Organizations</h1>
+</div>
+
+<a href="#" data-toggle="modal" data-target="#CreateOrganizationModal">Create new organization </a>
+
+<div class="row">
+   {% for org in orgs %}
+      <a href="{{url_for('organization.view_organization', id=org.id)}}" style="text-decoration: none">
+         <!-- Organization Card -->
+         <div class="card mb-4">
+            <div class="card-header py-3">
+               <h6 class="m-0 font-weight-bold text-primary">{{ org.name }}</h6>
+            </div>
+            <div class="card-body">
+               <div class="text-left">
+                  {% if org.img %}
+                     <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 10rem;" src="{{ org.img }}" alt="">
+                  {% endif %}               
+               <p>Description: {{ org.description }}</p>
+            
+            </div>
+         </div>
+      </a>
+   {% endfor %}
+</div>
+
+<!-- Create Organization Modal-->
+<div class="modal fade" id="CreateOrganizationModal" tabindex="-1" role="dialog" aria-labelledby="CreateOrganizationModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Create Organization</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">×</span>
+            </button>
+         </div>
+	 <div class="modal-body">
+            <form action="" method="post" role="form">
+            {{ create_form.csrf_token() }}
+            <div class="form-group">
+               {{ wtf.form_field(create_form.name)}}
+	    </div>
+            <div class="form-group">
+               {{ wtf.form_field(create_form.description)}}
+	    </div>
+	 </div>
+         <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+	    {{ wtf.form_field(create_form.submit, class="btn btn-primary btn-user btn-block") }}          
+         </div>
+      </div>
+   </div>
+</div>
+{% endblock %}

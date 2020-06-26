@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_moment import Moment
 
 from elasticsearch import Elasticsearch
 
@@ -16,6 +17,7 @@ db = SQLAlchemy()
 login = LoginManager()
 migrate = Migrate()
 mail = Mail()
+moment = Moment()
 
 def create_app(configfile=None):
 	app.config.from_object('config.DefaultConfig')
@@ -35,6 +37,9 @@ def create_app(configfile=None):
 	from .messages import routes
 	app.register_blueprint(routes.bp)
 	
+	from .organization import routes
+	app.register_blueprint(routes.bp)
+
 	db.init_app(app)
 	
 	login.init_app(app)
@@ -43,6 +48,8 @@ def create_app(configfile=None):
 	migrate.init_app(app, db)
 
 	mail.init_app(app)
+
+	moment.init_app(app)	
 
 	app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']])
 	if not app.elasticsearch.ping():

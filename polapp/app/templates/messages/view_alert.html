@@ -1,17 +1,16 @@
 {% extends 'base.html' %}
 
-{% block header %}Messages{% endblock %}
+{% block header %}Alerts{% endblock %}
 
-{% block title %}Messages{% endblock %}
+{% block title %}View alerts{% endblock %}
 
 {% block content %}
           <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">Messages</h1>
-	{% for thread in threads %}
-		Messages in thread: {{thread.messages.count()}}, ThreadId: {{thread.id}} 
-		{% set message = thread.last_message() %}
-        	{% include 'messages/_message.html' %}
-    	{% endfor %}
+          <h1 class="h3 mb-4 text-gray-800">View alert</h1>
+	{% for alert in thread.alerts %}
+		{% set thread_alert_count = 0 %}
+        	{% include 'messages/_alert.html' %}
+	{% endfor %}
 
     {% if prev_url %} 
 	<a href="{{ prev_url or '#' }}">

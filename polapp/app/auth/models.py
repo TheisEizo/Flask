@@ -1,42 +1,63 @@
-from app import app, db
-import jwt
-
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from flask_login import UserMixin
+from app import app, db
+from app.main.models import Notification
 from app.search.models import SearchableMixin
-from datetime import datetime
+from app.messages.models import Message, Alert, Thread
+from app.organization.models import Organization, Event
+
 from hashlib import md5
-from app.messages.models import Message
+import jwt
+from sqlalchemy import or_
+from datetime import datetime
 from time import time
+import json
+
+thread_to_user = db.Table('thread_to_user',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('thread_id', db.Integer, db.ForeignKey('thread.id'))
+)
+
+org_to_user = db.Table('org_to_user',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('org_id', db.Integer, db.ForeignKey('organization.id'))
+)
+
+event_to_user = db.Table('event_to_user',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('event_id', db.Integer, db.ForeignKey('event.id'))
+)
 
 class User(UserMixin, SearchableMixin, db.Model):
-    __searchable__ = ['username', 'email', 'about_me']
-
+    #Basic information 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
-    password_hash = db.Column(db.String(128))
-
-    email_validated = db.Column(db.Boolean, index=True, default=False)
-
     about_me = db.Column(db.String(140))
-
-    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return f'<User {self.username}>'
+
+    #Email and avatar
+    email = db.Column(db.String(120), index=True, unique=True)
+    email_validated = db.Column(db.Boolean, index=True, default=False)
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
+
+    #Last seen
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+    def is_online(self):
+        duration = datetime.now() - self.last_seen
+        return duration.total_seconds() > 300
+
+    #Password handling
+    password_hash = db.Column(db.String(128))
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-    def avatar(self, size):
-        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
-            digest, size)
 
     def get_token(self, key, expires_in=600):
         return jwt.encode(
@@ -52,15 +73,67 @@ class User(UserMixin, SearchableMixin, db.Model):
             return
         return User.query.get(id)
 
+    #Make searchable
+    __searchable__ = ['username', 'email', 'about_me']
+
+    #Message and Alert integration
     messages_sent = db.relationship('Message',
                                     foreign_keys='Message.sender_id',
-                                    backref='author', lazy='dynamic')
+                                    backref='sender', lazy='dynamic')
     messages_received = db.relationship('Message',
-                                        foreign_keys='Message.recipient_id',
-                                        backref='recipient', lazy='dynamic')
-    last_message_read_time = db.Column(db.DateTime)
+                                    foreign_keys='Message.recipient_id',
+                                    backref='recipient', lazy='dynamic')
+    alerts_received = db.relationship('Alert',
+                                    foreign_keys='Alert.recipient_id',
+                                    backref='recipient', lazy='dynamic')
+    #Thread integration
+    threads = db.relationship(
+        'Thread', secondary=thread_to_user, 
+         backref=db.backref('threads', lazy='dynamic'), lazy='dynamic')
+
+    def navbar_messages(self):
+        return self.threads.filter(Thread.messages != None).order_by(Thread.last_updated.desc()).limit(5)
+    def navbar_alerts(self):
+        return self.threads.filter(Thread.alerts != None).order_by(Thread.last_updated.desc()).limit(5)
 
     def new_messages_count(self):
-        last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
-        return Message.query.filter_by(recipient=self).filter(
-            Message.read_time > last_read_time).count()
+        threads = self.threads.all()
+        return sum([thread.new_messages_count() for thread in threads])
+    def new_alerts_count(self):
+        threads = self.threads.all()
+        return sum([thread.new_alerts_count() for thread in threads])
+
+    def add_thread(self, thread):
+        if not self.is_in_thread(thread):
+            self.threads.append(thread)
+    def is_in_thread(self, thread):
+        return self.threads.filter(
+            thread_to_user.c.thread_id == thread.id).count() > 0
+
+    #Organization intregration
+    orgs = db.relationship(
+        'Organization', secondary=org_to_user, 
+         backref=db.backref('members', lazy='dynamic'), lazy='dynamic')
+    
+    events = db.relationship(
+        'Event', secondary=event_to_user, 
+         backref=db.backref('participants', lazy='dynamic'), lazy='dynamic')
+
+    votes = db.relationship('Vote', backref='user', lazy=True)
+
+    def add_organization(self, org):
+        if not self.is_in_org(org):
+            self.orgs.append(org)
+    def is_in_org(self, org):
+        return self.orgs.filter(
+            org_to_user.c.org_id == org.id).count() > 0
+
+    #Notification integration
+    notifications = db.relationship('Notification', backref='user',
+                                    lazy='dynamic')
+
+    def add_notification(self, name, data):
+        self.notifications.filter_by(name=name).delete()
+        n = Notification(name=name, payload_json=json.dumps(data), user=self)
+        db.session.add(n)
+        return n

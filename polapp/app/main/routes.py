@@ -1,10 +1,11 @@
-from flask import Blueprint, g, render_template, send_file, abort
+from flask import Blueprint, g, render_template, send_file, abort, jsonify, request
 from flask_login import login_required, current_user
 from app import db
 from app.search.forms import SearchForm
+from app.auth.models import Notification
 from datetime import datetime
 
-bp = Blueprint('index', __name__)
+bp = Blueprint('main', __name__)
 
 @bp.before_request
 def before_request():
@@ -35,39 +36,51 @@ def download(file_type, file_name=None):
 def error(e=404):
 	return render_template('pages/404.html'), 404
 
+@bp.route('/notifications')
+@login_required
+def notifications():
+    since = request.args.get('since', 0.0, type=float)
+    notifications = current_user.notifications.filter(
+        Notification.timestamp > since).order_by(Notification.timestamp.asc())
+    return jsonify([{
+        'name': n.name,
+        'data': n.get_data(),
+        'timestamp': n.timestamp
+    } for n in notifications])
+
 @bp.route('/blank')
 def blank():
 	return render_template('pages/blank.html')
 
 @bp.route('/utilities/animation')
 def animation():
-    return render_template('utilities/animation.html')
+    return render_template('pages/animation.html')
 
 @bp.route('/utilities/border')
 def border():
-    return render_template('utilities/border.html')
+    return render_template('pages/border.html')
 
 @bp.route('/utilities/color')
 def color():
-    return render_template('utilities/color.html')
+    return render_template('pages/color.html')
 
 @bp.route('/utilities/other')
 def other():
-    return render_template('utilities/other.html')
+    return render_template('pages/other.html')
 
 @bp.route('/elements/buttons')
 def buttons():
-    return render_template('elements/buttons.html')
+    return render_template('pages/buttons.html')
 
 @bp.route('/elements/cards')
 def cards():
-    return render_template('elements/cards.html')
+    return render_template('pages/cards.html')
 
 @bp.route('/elements/charts')
 def charts():
-    return render_template('elements/charts.html')
+    return render_template('pages/charts.html')
 
 @bp.route('/elements/tables')
 def tables():
-    return render_template('elements/tables.html')
+    return render_template('pages/tables.html')
 

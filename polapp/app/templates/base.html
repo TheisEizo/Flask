@@ -18,6 +18,9 @@
   <!-- Custom styles for this template-->
   <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet">
 
+	{{ moment.include_jquery() }}
+	{{ moment.include_moment() }}
+
 </head>
 
 <body id="page-top">
@@ -63,10 +66,10 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Custom Components:</h6>
-            <a class="collapse-item" href="{{ url_for('index.buttons') }}">Buttons</a>
-            <a class="collapse-item" href="{{ url_for('index.cards') }}">Cards</a>
-            <a class="collapse-item" href="{{ url_for('index.charts') }}">Charts</a>
-            <a class="collapse-item" href="{{ url_for('index.tables') }}">Tables</a>
+            <a class="collapse-item" href="{{ url_for('main.buttons') }}">Buttons</a>
+            <a class="collapse-item" href="{{ url_for('main.cards') }}">Cards</a>
+            <a class="collapse-item" href="{{ url_for('main.charts') }}">Charts</a>
+            <a class="collapse-item" href="{{ url_for('main.tables') }}">Tables</a>
           </div>
         </div>
       </li>
@@ -80,10 +83,10 @@
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Custom Utilities:</h6>
-            <a class="collapse-item" href="{{ url_for('index.color') }}">Colors</a>
-            <a class="collapse-item" href="{{ url_for('index.border') }}">Borders</a>
-            <a class="collapse-item" href="{{ url_for('index.animation') }}">Animations</a>
-            <a class="collapse-item" href="{{ url_for('index.other') }}">Other</a>
+            <a class="collapse-item" href="{{ url_for('main.color') }}">Colors</a>
+            <a class="collapse-item" href="{{ url_for('main.border') }}">Borders</a>
+            <a class="collapse-item" href="{{ url_for('main.animation') }}">Animations</a>
+            <a class="collapse-item" href="{{ url_for('main.other') }}">Other</a>
           </div>
         </div>
       </li>
@@ -105,15 +108,15 @@
         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Error Pages:</h6>
-            <a class="collapse-item" href="{{ url_for('index.error') }}">404 Page</a>
+            <a class="collapse-item" href="{{ url_for('main.error') }}">404 Page</a>
             <div class="collapse-divider"></div>
             <h6 class="collapse-header">Other Pages:</h6>
-            <a class="collapse-item" href="{{ url_for('index.blank') }}">Blank Page</a>
+            <a class="collapse-item" href="{{ url_for('main.blank') }}">Blank Page</a>
           </div>
         </div>
       </li>
 
-	<!-- Nav Item - Auth Collapse Menu -->
+      <!-- Nav Item - Auth Collapse Menu -->
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAuth" aria-expanded="true" aria-controls="collapsePages">
           <i class="fas fa-fw fa-smile"></i>
@@ -132,16 +135,45 @@
         </div>
       </li>
 
+      <!-- Nav Item - Messages Collapse Menu -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMessage" aria-expanded="true" aria-controls="collapsePages">
+          <i class="fas fa-fw fa-envelope"></i>
+          <span>Messages</span>
+        </a>
+        <div id="collapseMessage" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+	    <h6 class="collapse-header">Messages Navigation:</h6>
+            <a class="collapse-item" href="{{url_for('messages.messages') }}">Messages</a>
+            <a class="collapse-item" href="{{url_for('messages.alerts') }}">Alerts</a>
+          </div>
+        </div>
+      </li>
+
+      <!-- Nav Item - Organization Collapse Menu -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOrganization" aria-expanded="true" aria-controls="collapsePages">
+          <i class="fas fa-fw fa-users"></i>
+          <span>Organization</span>
+        </a>
+        <div id="collapseOrganization" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+	    <h6 class="collapse-header">Organization Navigation:</h6>
+            <a class="collapse-item" href="{{url_for('organization.organizations') }}">Organizations</a>
+          </div>
+        </div>
+      </li>
+
       <!-- Nav Item - Charts -->
       <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('index.charts') }}">
+        <a class="nav-link" href="{{ url_for('main.charts') }}">
           <i class="fas fa-fw fa-chart-area"></i>
           <span>Charts</span></a>
       </li>
 
       <!-- Nav Item - Tables -->
       <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('index.tables') }}">
+        <a class="nav-link" href="{{ url_for('main.tables') }}">
           <i class="fas fa-fw fa-table"></i>
           <span>Tables</span></a>
       </li>
@@ -220,47 +252,45 @@
               <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-bell fa-fw"></i>
                 <!-- Counter - Alerts -->
-                <span class="badge badge-danger badge-counter">3+</span>
+                {% set new_alerts_count = current_user.new_alerts_count() %}
+                <span id="alert_count" class="badge badge-danger badge-counter" style="visibility: {% if new_alerts_count %}visible
+                                                     {% else %}hidden {% endif %};">{{new_alerts_count}}</span>
               </a>
               <!-- Dropdown - Alerts -->
               <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
                 <h6 class="dropdown-header">
                   Alerts Center
                 </h6>
-                <a class="dropdown-item d-flex align-items-center" href="#">
+		{% for alert_thread in current_user.navbar_alerts() %}
+		   {% set alert = alert_thread.last_alert() %}
+                <a class="dropdown-item d-flex align-items-center" href="{{url_for('messages.view_alert', thread_id=alert_thread.id)}}">
                   <div class="mr-3">
-                    <div class="icon-circle bg-primary">
-                      <i class="fas fa-file-alt text-white"></i>
+                    <div class="{{'icon-circle '+alert.background}}">
+                      <i class="{{'fas '+alert.icon+' text-white'}}"></i>
                     </div>
                   </div>
                   <div>
-                    <div class="small text-gray-500">December 12, 2019</div>
-                    <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                    <div class="small text-gray-500">{{moment(alert.sent_time).fromNow()}}</div>
+		   {% if alert.read_time %}
+                    <span class="font-weight-normal">
+		   {% else %}
+		    <span class="font-weight-bold">
+		   {% endif %} 
+			{{alert.body}}</span>
+		   
                   </div>
                 </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="mr-3">
-                    <div class="icon-circle bg-success">
-                      <i class="fas fa-donate text-white"></i>
-                    </div>
+		{% else %}
+		<a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="dropdown-list-image mr-3">
                   </div>
-                  <div>
-                    <div class="small text-gray-500">December 7, 2019</div>
-                    $290.29 has been deposited into your account!
+                  <div class="font-weight-normal">
+                    <div class="text-truncate">You have no alerts :)</div>
                   </div>
                 </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="mr-3">
-                    <div class="icon-circle bg-warning">
-                      <i class="fas fa-exclamation-triangle text-white"></i>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="small text-gray-500">December 2, 2019</div>
-                    Spending Alert: We've noticed unusually high spending for your account.
-                  </div>
-                </a>
-                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+		{% endfor %}
+
+                <a class="dropdown-item text-center small text-gray-500" href="{{url_for('messages.alerts')}}">Show All Alerts</a>
               </div>
             </li>
 
@@ -269,53 +299,43 @@
               <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-envelope fa-fw"></i>
                 <!-- Counter - Messages -->
-                <span class="badge badge-danger badge-counter">7</span>
+		{% set new_messages_count = current_user.new_messages_count() %}
+                <span id="message_count" class="badge badge-danger badge-counter" style="visibility: {% if new_messages_count %}visible
+                                                     {% else %}hidden {% endif %};">{{new_messages_count}}</span>
               </a>
               <!-- Dropdown - Messages -->
               <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="messagesDropdown">
                 <h6 class="dropdown-header">
                   Message Center
                 </h6>
-                <a class="dropdown-item d-flex align-items-center" href="#">
+		{% for msg_thread in current_user.navbar_messages() %}
+		    {% set message = msg_thread.last_message() %}
+                <a class="dropdown-item d-flex align-items-center" href="{{url_for('messages.view_message', thread_id=msg_thread.id)}}">
                   <div class="dropdown-list-image mr-3">
-                    <img class="rounded-circle" src="https://source.unsplash.com/fn_BT9fwg_E/60x60" alt="">
-                    <div class="status-indicator bg-success"></div>
+                    <img class="rounded-circle" src={{message.sender.avatar(60)}} alt="">
+                    {% if message.sender.is_online() %}
+			<div class="status-indicator bg-success"></div>
+		    {% endif %}
                   </div>
-                  <div class="font-weight-bold">
-                    <div class="text-truncate">Hi there! I am wondering if you can help me with a problem I've been having.</div>
-                    <div class="small text-gray-500">Emily Fowler · 58m</div>
+		  {% if message.read_time %}
+                  <div class="font-weight-normal">
+		  {% else %}
+		  <div class="font-weight-bold">
+		  {% endif %}
+                    <div class="text-truncate">{{message.body}}</div>
+                    <div class="small text-gray-500">{{message.sender.username}} · {{moment(message.sent_time).fromNow()}}</div>
                   </div>
                 </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
+		{% else %}
+		<a class="dropdown-item d-flex align-items-center" href="#">
                   <div class="dropdown-list-image mr-3">
-                    <img class="rounded-circle" src="https://source.unsplash.com/AU4VPcFN4LE/60x60" alt="">
-                    <div class="status-indicator"></div>
                   </div>
-                  <div>
-                    <div class="text-truncate">I have the photos that you ordered last month, how would you like them sent to you?</div>
-                    <div class="small text-gray-500">Jae Chun · 1d</div>
+                  <div class="font-weight-normal">
+                    <div class="text-truncate">You have no messages :(</div>
                   </div>
                 </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="dropdown-list-image mr-3">
-                    <img class="rounded-circle" src="https://source.unsplash.com/CS2uCrpNzJY/60x60" alt="">
-                    <div class="status-indicator bg-warning"></div>
-                  </div>
-                  <div>
-                    <div class="text-truncate">Last month's report looks great, I am very happy with the progress so far, keep up the good work!</div>
-                    <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                  </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="dropdown-list-image mr-3">
-                    <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60" alt="">
-                    <div class="status-indicator bg-success"></div>
-                  </div>
-                  <div>
-                    <div class="text-truncate">Am I a good boy? The reason I ask is because someone told me that people say this to all dogs, even if they aren't good...</div>
-                    <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                  </div>
-                </a>
+		{% endfor %}
+                
                 <a class="dropdown-item text-center small text-gray-500" href="{{url_for('messages.messages')}}">Read More Messages</a>
               </div>
             </li>
@@ -449,6 +469,34 @@
   <script src="{{ url_for('static', filename='js/demo/chart-pie-demo.js') }}"></script>
   <script src="{{ url_for('static', filename='js/demo/chart-bar-demo.js') }}"></script>
 
+  <script>
+        function set_message_count(n) {
+            $('#message_count').text(n);
+            $('#message_count').css('visibility', n ? 'visible' : 'hidden');
+        }
+  </script>
+
+<!--
+  <script>
+        {% if current_user.is_authenticated %}
+        $(function() {
+            var since = 0;
+            setInterval(function() {
+                $.ajax('{{ url_for('main.notifications') }}?since=' + since).done(
+                    function(notifications) {
+                        for (var i = 0; i < notifications.length; i++) {
+                            if (notifications[i].name == 'unread_message_count')
+                                set_message_count(notifications[i].data);
+                            since = notifications[i].timestamp;
+                        }
+                    }
+                );
+            }, 10000);
+        });
+        {% endif %}   
+    </script>
+-->   
+  
 </body>
 
 </html>
