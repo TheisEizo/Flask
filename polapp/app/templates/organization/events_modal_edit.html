@@ -1,0 +1,33 @@
+<!-- Edit Event Modal-->
+<div class="modal fade" id="EditEventModal" tabindex="-1" role="dialog" aria-labelledby="EditEventModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+	<form action="{{url_for('organization._event_edit', id=event.id)}}" method="post" role="form">
+         <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Edit Event</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">×</span>
+            </button>
+         </div>
+	 <div class="modal-body">
+
+            {{ edit_form.csrf_token() }}
+            
+            <div class="form-group">
+               {{ wtf.form_field(edit_form.name, value=event.name)}}
+	    </div>
+            <div class="form-group">
+               {{ wtf.form_field(edit_form.descriptionEdit, value=event.description)}}
+	    </div>
+            <div class="form-group">
+               {{ wtf.form_field(edit_form.img, value=event.img)}}
+	    </div>
+	 </div>
+         <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+	    {{ wtf.form_field(edit_form.submitEdit, class="btn btn-primary btn-user btn-block") }}          
+         </div>
+         </form>
+      </div>
+   </div>
+</div>

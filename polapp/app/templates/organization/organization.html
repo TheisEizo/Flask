@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block header %}
+   <a href="{{url_for('organization.organizations')}}">&larr; Back to Organizations</a>
+{% endblock %}
+
+{% block title %}
+   {{org.name}}
+{% endblock %}
+
+{% block content %}
+   <!-- Page Heading -->
+   <h1 class="h3 mb-4 text-gray-800">View Organization</h1>
+   <div class="row">
+      <div class="col-lg"> 
+         {% include 'organization/organization_card.html' %}
+      </div>
+   </div>
+   {% include 'organization/organization_modal_edit.html' %}
+{% endblock %}

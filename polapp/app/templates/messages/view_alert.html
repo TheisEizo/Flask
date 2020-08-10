@@ -1,27 +1,56 @@
 {% extends 'base.html' %}
 
-{% block header %}Alerts{% endblock %}
+{% block header %}<a href="{{url_for('messages.alerts')}}">&larr; Back to Alerts</a>{% endblock %}
 
-{% block title %}View alerts{% endblock %}
+{% block title %}Alert{% endblock %}
 
 {% block content %}
-          <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">View alert</h1>
-	{% for alert in thread.alerts %}
-		{% set thread_alert_count = 0 %}
-        	{% include 'messages/_alert.html' %}
-	{% endfor %}
+   <!-- Page Heading -->
+   <h1 class="h3 mb-4 text-gray-800">Alert Title here?</h1>
+   {% for alert in thread.alerts %}
 
-    {% if prev_url %} 
-	<a href="{{ prev_url or '#' }}">
-                    <span aria-hidden="true">&larr;</span>
-                    'Previous results'
-        </a>
-    {% endif %}
-    {% if next_url %}
-        <a href="{{ next_url or '#' }}">
-                    'Next results'
-                    <span aria-hidden="true">&rarr;</span>
-        </a>
-    {% endif %}
+      <div class="card shadow mb-4">
+         <!-- Card Header - Dropdown -->
+         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary"> Alert Title Here </h6>
+            <div class="dropdown no-arrow">
+               <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+               </a>
+               <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                  <div class="dropdown-header">Action:</div>
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Something else here</a>
+               </div>
+            </div>
+         </div>
+
+         <!-- Card Body -->
+         <div class="card-body">
+            Sent {{ moment(alert.sent_time).fromNow() }} | 
+            {% if alert.read_time %} Alert read {{ moment(alert.read_time).fromNow()}} {% endif %}
+            <div class="{{'icon-circle '+alert.background}}">
+               <i class="{{'fas '+alert.icon+' text-white fa-fw'}}"></i>
+            </div>
+            {{ alert.body }}
+         </div>
+      </div>
+
+   {% endfor %}
+
+   {% if prev_url %} 
+      <a href="{{ prev_url or '#' }}">
+         <span aria-hidden="true">&larr;</span>
+         'Previous results'
+      </a>
+   {% endif %}
+   {% if next_url %}
+      <a href="{{ next_url or '#' }}">
+         'Next results'
+         <span aria-hidden="true">&rarr;</span>
+      </a>
+   {% endif %}
+
 {% endblock %}

@@ -7,7 +7,11 @@
 
 {% block content %}
           <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">View message</h1>
+          <h1 class="h3 mb-4 text-gray-800">View messages from 
+		{% for recipient in recipients %} 
+			<a href="{{ url_for('auth.profile', username=recipient.username) }}">{{recipient.username}}</a> 
+		{% endfor %} 
+	  </h1>
 	{% for message in thread.messages %}
         <table class="table table-hover">
         <tr>
@@ -25,18 +29,20 @@
                     </span>
                 {% endset %}
                 {{user_link}} said {{ moment(message.sent_time).fromNow() }}
-                {% if message.read_time %}
-		<br>
-		Message read {{ moment(message.read_time).fromNow()}}
-		{% endif %}
                 <br>
+                {% if message.get_read_time(current_user) %}
 		
+		Message read {{ moment(message.get_read_time(current_user)).fromNow()}}
+			<br>
+		{% endif %}
+                
                 <span id="message{{ message.id }}">{{ message.body }}</span>
             </td>
         </tr>
     </table>
 	{% endfor %}
-	<h1>Reply {% for recipient_user in recipient_users %} {{recipient_user.username}} {% endfor %} </h1>
+<br>
+	<h3>Reply </h3>
     <div class="row">
         <div class="col-md-4">
             {{ wtf.quick_form(form) }}

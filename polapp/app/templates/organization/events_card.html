@@ -1,0 +1,16 @@
+<!-- Event Card -->      
+<div class="card mb-4">
+      <div class="card-header py-3">
+         <h6 class="m-0 font-weight-bold text-primary">{{ event.name }}</h6>
+      </div>
+   </a>
+   <div class="card-body">
+      <div class="text-left">
+         {% if event.img and event.img!='None'%}
+            <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 10rem;" src="{{ event.img }}" alt="">
+         {% endif %}               
+         <p>Description: {{ event.description }}</p>
+         <a href="#" data-toggle="modal" data-target={{"#EditEventModal"+event.id|string}}>Edit event </a>
+      </div>
+   </div>
+</div>

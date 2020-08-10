@@ -34,5 +34,3 @@ def send_validation_email(user):
                                          user=user, token=token),
                html_body=render_template('messages/validate_email.html',
                                          user=user, token=token))
-
-

@@ -1,4 +1,4 @@
-<a href="{{url_for('messages.view_message', thread_id=thread.id)}}" style="text-decoration: none">    
+<a href="{{url_for('messages.view_message', thread_id=thread_id)}}" style="text-decoration: none">    
 <table class="table table-hover">
         <tr>
             <td width="70px">
@@ -16,10 +16,10 @@
                 {% endset %}
                 {{user_link}} said {{ moment(message.sent_time).fromNow() }}
 		<br>
-                {% if message.read_time %}
-		Message read {{ moment(message.read_time).fromNow()}}
+                {% if message.get_read_time(current_user) %}
+		   Message read {{ moment(message.get_read_time(current_user)).fromNow()}}
+		   <br>
 		{% endif %}
-                <br>
                 {{ message.body }}		
             </td>
         </tr>

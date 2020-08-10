@@ -1,0 +1,38 @@
+<!-- Create Event Modal-->
+<div class="modal fade" id="CreateEventModal" tabindex="-1" role="dialog" aria-labelledby="CreateEventModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Create Event</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">×</span>
+            </button>
+         </div>
+         <form action="{{url_for('organization._eventsCreateForm')}}" method="post" role="form">
+	    <div class="modal-body">
+               {{ create_form.csrf_token() }}
+               <div class="form-group">
+                  {{ wtf.form_field(create_form.name)}}
+	       </div>
+               <div class="form-group">
+                  {{ wtf.form_field(create_form.org)}}
+	       </div>
+               <div class="form-group">
+                  {{ wtf.form_field(create_form.description)}}
+	       </div>
+               <div class="form-group">
+                  {{ wtf.form_field(create_form.start_time)}}
+	       </div>
+               <div class="form-group">
+                  {{ wtf.form_field(create_form.end_time)}}
+	       </div>
+	    </div>
+            <div class="modal-footer">
+               <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+	       {{ wtf.form_field(create_form.submit, class="btn btn-primary btn-user btn-block") }}          
+            </div>
+         </div>
+      </form>
+   </div>
+</div>
+

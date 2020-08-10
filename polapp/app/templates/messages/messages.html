@@ -7,8 +7,8 @@
 {% block content %}
           <!-- Page Heading -->
           <h1 class="h3 mb-4 text-gray-800">Messages</h1>
-	{% for thread in threads %}
-		Messages in thread: {{thread.messages.count()}}, ThreadId: {{thread.id}} 
+	{% for (thread_id, thread) in threadIDs_threads %}
+		Messages in thread: {{thread.messages.count()}}, ThreadId: {{thread_id}} 
 		{% set message = thread.last_message() %}
         	{% include 'messages/_message.html' %}
     	{% endfor %}

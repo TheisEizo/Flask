@@ -28,9 +28,25 @@ class Organization(SearchableMixin, db.Model):
         secondaryjoin=(org_to_org.c.main_org_id == id),
         backref=db.backref('sub_orgs', lazy='dynamic'), lazy='dynamic')
 
+    def add_organization(self, org):
+        if not self.is_in_org(org):
+            self.main_orgs.append(org)
+
+    def is_in_org(self, org):
+        return self.main_orgs.filter(
+            org_to_org.c.main_org_id == org.id).count() > 0
+
     events = db.relationship(
         'Event', secondary=event_to_org, 
          backref=db.backref('events', lazy='dynamic'), lazy='dynamic')
+
+    def add_event(self, event):
+        if not self.is_in_event(event):
+            self.events.append(event)
+
+    def is_in_event(self, event):
+        return self.events.filter(
+            event_to_org.c.event_id == event.id).count() > 0
 
 class Event(SearchableMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -48,7 +64,7 @@ class Event(SearchableMixin, db.Model):
 
 class Resource(SearchableMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
+    name = db.Column(db.String(64), index=True)
     description = db.Column(db.Text)
     img = db.Column(db.String(140))
 

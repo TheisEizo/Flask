@@ -5,27 +5,26 @@
 {% block title %}Search Results{% endblock %}
 
 {% block content %}
-
-          <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">Search Results</h1>
+   <!-- Page Heading -->
+   <h1 class="h3 mb-4 text-gray-800">Search Results</h1>
     
-    {% if users %} Users: {% endif %}
-    {% for user in users %}
-        <p><a href="{{url_for('auth.profile', username=user.username)}}"> {{user.username}} </a></p>
-    {% else %}
-    <p>No results :(</p>
-    {% endfor %}
-
-    {% if prev_url %} 
-	<a href="{{ prev_url or '#' }}">
-                    <span aria-hidden="true">&larr;</span>
-                    'Previous results'
-        </a>
-    {% endif %}
-    {% if next_url %}
-        <a href="{{ next_url or '#' }}">
-                    'Next results'
-                    <span aria-hidden="true">&rarr;</span>
-        </a>
-    {% endif %}
+   {% if users %} Users: 
+      {% for user in users %}
+         <p><a href="{{url_for('auth.profile', username=user.username)}}"> {{user.username}} </a></p>
+      {% else %}
+         <p>No results :(</p>
+      {% endfor %}
+   {% endif %}
+   {% if prev_url %} 
+      <a href="{{ prev_url or '#' }}">
+         <span aria-hidden="true">&larr;</span>
+         'Previous results'
+      </a>
+   {% endif %}
+   {% if next_url %}
+      <a href="{{ next_url or '#' }}">
+         'Next results'
+         <span aria-hidden="true">&rarr;</span>
+      </a>
+   {% endif %}
 {% endblock %}

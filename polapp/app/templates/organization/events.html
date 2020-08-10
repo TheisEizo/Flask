@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block header %}
+   <a href="{{url_for('index')}}">&larr; Back to Dashboard</a>
+{% endblock %}
+
+{% block title %}
+   Events
+{% endblock %}
+
+{% block content %}
+   <!-- Page Heading -->
+      <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Events</h1>
+   </div>
+
+   <a href="#" data-toggle="modal" data-target="#CreateEventModal">Create new event</a>
+
+   <div class="row">
+      <div class="col-lg"> 
+         {% for event in events %}
+            {% include 'organization/events_card.html' %}
+            {% include 'organization/events_modal_edit.html' %}
+         {% endfor %}
+     </div>
+   </div>
+
+   {% include 'organization/events_modal_create.html' %}
+
+{% endblock %}

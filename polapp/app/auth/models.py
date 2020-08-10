@@ -80,9 +80,7 @@ class User(UserMixin, SearchableMixin, db.Model):
     messages_sent = db.relationship('Message',
                                     foreign_keys='Message.sender_id',
                                     backref='sender', lazy='dynamic')
-    messages_received = db.relationship('Message',
-                                    foreign_keys='Message.recipient_id',
-                                    backref='recipient', lazy='dynamic')
+
     alerts_received = db.relationship('Alert',
                                     foreign_keys='Alert.recipient_id',
                                     backref='recipient', lazy='dynamic')
@@ -98,10 +96,11 @@ class User(UserMixin, SearchableMixin, db.Model):
 
     def new_messages_count(self):
         threads = self.threads.all()
-        return sum([thread.new_messages_count() for thread in threads])
+        return sum([t.new_messages_count(self) for t in threads])
+
     def new_alerts_count(self):
         threads = self.threads.all()
-        return sum([thread.new_alerts_count() for thread in threads])
+        return sum([t.new_alerts_count(self) for t in threads])
 
     def add_thread(self, thread):
         if not self.is_in_thread(thread):
@@ -127,6 +126,13 @@ class User(UserMixin, SearchableMixin, db.Model):
     def is_in_org(self, org):
         return self.orgs.filter(
             org_to_user.c.org_id == org.id).count() > 0
+
+    def add_event(self, event):
+        if not self.is_in_event(event):
+            self.events.append(event)
+    def is_in_event(self, event):
+        return self.events.filter(
+            event_to_user.c.event_id == event.id).count() > 0
 
     #Notification integration
     notifications = db.relationship('Notification', backref='user',

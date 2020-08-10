@@ -4,6 +4,7 @@ from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Le
 from app.auth.models import User
 from flask_login import current_user
 from flask import flash
+from app.main.funcs import isint
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -20,6 +21,9 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Register')
 
     def validate_username(self, username):
+        if isint(username.data):
+            flash('Username cannot be an integer :(')
+            raise ValidationError('Please use a different username.')
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
             raise ValidationError('Please use a different username.')
@@ -35,11 +39,14 @@ class EditProfileForm(FlaskForm):
     submit = SubmitField('Submit')
 
     def validate_username(self, username):
+        if isint(username.data):
+            flash('Username cannot be an integer :(')
+            raise ValidationError('Please use a different username.')
         user = User.query.filter_by(username=username.data).first()
         if current_user.username != username.data and user is not None:
             flash('That username has ALREADY been taken :(')
             raise ValidationError('Please use a different username.')
-
+	
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Request Password Reset')

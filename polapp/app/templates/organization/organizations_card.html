@@ -1,0 +1,17 @@
+<!-- Organization Card -->      
+<div class="card mb-4">
+   <a href="{{url_for('organization.organization', id=org.id)}}" style="text-decoration: none">
+      <div class="card-header py-3">
+         <h6 class="m-0 font-weight-bold text-primary">{{ org.name }}</h6>
+      </div>
+   </a>
+   <div class="card-body">
+      <div class="text-left">
+         {% if org.img and org.img!='None'%}
+            <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 10rem;" src="{{ org.img }}" alt="">
+         {% endif %}               
+         <p>Description: {{ org.description }}</p>
+         <a href="#" data-toggle="modal" data-target={{"#EditOrganizationModal"+org.id|string}}>Edit organization </a>
+      </div>
+   </div>
+</div>

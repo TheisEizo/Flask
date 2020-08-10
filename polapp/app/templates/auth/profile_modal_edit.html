@@ -1,0 +1,27 @@
+<!-- Edit Profile Modal-->
+<div class="modal fade" id="EditProfileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">×</span>
+            </button>
+         </div>
+	 <div class="modal-body">
+            <form action="" method="post" role="form">
+            {{ form.csrf_token() }}
+            <div class="form-group">
+               {{ wtf.form_field(form.username, value=user.username)}}
+	    </div>
+            <div class="form-group">
+               {{ wtf.form_field(form.about_me, value=user.about_me)}}
+	    </div>
+	 </div>
+         <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+	    {{ wtf.form_field(form.submit, class="btn btn-primary btn-user btn-block") }}          
+         </div>
+      </div>
+   </div>
+</div>

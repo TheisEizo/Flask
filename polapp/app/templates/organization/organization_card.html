@@ -1,0 +1,19 @@
+<!-- Organization Card -->
+   <div class="card mb-4">
+      <div class="card-header py-3">
+         <h6 class="m-0 font-weight-bold text-primary">{{ org.name }}</h6>
+      </div>
+      <div class="card-body">
+         <div class="text-left">
+            {% if org.img and org.img != 'None' %}
+               <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 10rem;" src="{{ org.img }}" alt="">
+            {% endif %}
+         <p>Main Orgs: 
+            {% for main_org in org.main_orgs %}
+               <a href="{{url_for('organization.viewOrganization', id=main_org.id)}}">{{main_org.name}}</a>,
+            {% endfor %}
+         </p>
+         <p>Description: {{ org.description }}</p>
+         <a href="#" data-toggle="modal" data-target="#EditOrganizationModal">Edit</a>
+      </div>
+   </div>

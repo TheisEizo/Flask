@@ -2,68 +2,25 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block header %}
-{% block title %} 
-	User Profile
+   <a href="{{ url_for('index') }}">&larr; Back to Dashboard</a>
 {% endblock %}
+
+{% block title %} 
+   User Profile
 {% endblock %}
 
 {% block content %}
-<!-- Page Heading -->
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-  <h1 class="h3 mb-0 text-gray-800">Hi {{ user.username }}!</h1>
-</div>
+   <!-- Page Heading -->
+   <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Hi {{ user.username }}!</h1>
+   </div>
 
-<div class="row">
-   <!-- User Profile Card -->
-   <div class="card mb-4">
-      <div class="card-header py-3">
-         <h6 class="m-0 font-weight-bold text-primary">Username: {{ user.username }}</h6>
-      </div>
-      <div class="card-body">
-         <div class="text-left">
-            <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 10rem;" src="{{ user.avatar(128) }}" alt="">
-            <p>Is Email Validated: {{ user.email_validated }}</p>	
-            <p> About me: {% if user.about_me %}{{ user.about_me }} {% endif %}</p>
-            <p>Last seen: {% if user.last_seen %}{{ moment(user.last_seen).calendar()}}{% endif %}</p>
-            {% if user == current_user %}
-               <a href="#" data-toggle="modal" data-target="#EditProfileModal">Edit Profile</a>
-            {% else %}
-               <a href="{{ url_for('messages.send_message',recipient=user.username) }}">Send private message</a>
-            {% endif %}
-         </div>
+   <div class="row">
+      <div class="col-lg"> 
+         {% include 'auth/profile_card.html' %}
       </div>
    </div>
-</div>
 
-<a href="{{ url_for('index') }}">&larr; Back to Dashboard</a>
-
-
-<!-- Edit Profile Modal-->
-<div class="modal fade" id="EditProfileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-   <div class="modal-dialog" role="document">
-      <div class="modal-content">
-         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
-            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-               <span aria-hidden="true">×</span>
-            </button>
-         </div>
-	 <div class="modal-body">
-            <form action="" method="post" role="form">
-            {{ form.csrf_token() }}
-            <div class="form-group">
-               {{ wtf.form_field(form.username, value=user.username)}}
-	    </div>
-            <div class="form-group">
-               {{ wtf.form_field(form.about_me, value=user.about_me)}}
-	    </div>
-	 </div>
-         <div class="modal-footer">
-            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-	    {{ wtf.form_field(form.submit, class="btn btn-primary btn-user btn-block") }}          
-         </div>
-      </div>
-   </div>
-</div>
+   {% include 'auth/profile_modal_edit.html' %}
 {% endblock %}
 

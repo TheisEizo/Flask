@@ -1,0 +1,31 @@
+<!-- Edit Organization Modal-->
+<div class="modal fade" id="{{'EditOrganizationModal'+org.id|string}}" role="dialog" aria-labelledby="{{'EditOrganizationModal'+org.id|string+'Label'}}" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Edit Organization</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">×</span>
+            </button>
+         </div>
+         <form action="{{url_for('organization._organizations_edit', id=org.id)}}" method="post" role="form">
+            <div class="modal-body">
+               {{ edit_form.csrf_token() }}
+               <div class="form-group">
+                  {{ wtf.form_field(edit_form.name, value=org.name)}}
+	       </div>
+               <div class="form-group">
+                  {{ wtf.form_field(edit_form.descriptionEdit, value=org.description)}}
+	       </div>
+               <div class="form-group">
+                  {{ wtf.form_field(edit_form.img, value=org.img)}}
+	       </div>
+	    </div>
+            <div class="modal-footer">
+               <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+	       {{ wtf.form_field(edit_form.submitEdit, class="btn btn-primary btn-user btn-block") }}          
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
